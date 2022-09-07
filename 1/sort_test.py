@@ -1,7 +1,7 @@
 from copy import deepcopy
 from random import randint as rand
 import unittest
-from sort import selection_sort, heap_sort, merge_sort
+from sort import selection_sort, heap_sort, merge_sort, insertion_sort
 
 
 class TestSortAlgos(unittest.TestCase):
@@ -13,6 +13,9 @@ class TestSortAlgos(unittest.TestCase):
 
     def test_heap_sort(self):
         self.exec_and_test_sort(heap_sort)
+
+    def test_insertion_sort(self):
+        self.exec_and_test_sort(insertion_sort)
 
     def exec_and_test_sort(self, sort):
         array, sorted_array = self.gen_array()

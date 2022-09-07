@@ -18,3 +18,7 @@ def merge_sort(array):
 
 def heap_sort(array):
     raise NotImplementedError()
+
+
+def insertion_sort(array):
+    raise NotImplementedError()
