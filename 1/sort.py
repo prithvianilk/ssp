@@ -1,3 +1,8 @@
+from random import randint
+
+MAX_VAL = 1e7
+
+
 def swap(i, j, array):
     temp = array[i]
     array[i] = array[j]
@@ -79,3 +84,7 @@ def insertion_sort(array):
             array[j+1] = array[j]
             j -= 1
         array[j+1] = pivot
+
+
+def gen_array(len: int, max_val=MAX_VAL):
+    return [randint(0, max_val) for _ in range(len)]

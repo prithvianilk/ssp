@@ -1,7 +1,7 @@
 from copy import deepcopy
 from random import randint as rand
 import unittest
-from sort import selection_sort, heap_sort, merge_sort, insertion_sort
+from sort import selection_sort, heap_sort, merge_sort, insertion_sort, gen_array
 
 
 class TestSortAlgos(unittest.TestCase):
@@ -18,15 +18,9 @@ class TestSortAlgos(unittest.TestCase):
         self.exec_and_test_sort(insertion_sort)
 
     def exec_and_test_sort(self, sort):
-        array, sorted_array = self.gen_array()
+        array = gen_array(int(1e3))
         sort(array)
-        self.assertEqual(array, sorted_array)
-
-    def gen_array(self):
-        n, max_val = int(1e3), int(1e7)
-        array = [rand(0, max_val) for _ in range(n)]
-        sorted_array = sorted(deepcopy(array))
-        return array, sorted_array
+        self.assertEqual(array, sorted(array))
 
 
 if __name__ == "__main__":
