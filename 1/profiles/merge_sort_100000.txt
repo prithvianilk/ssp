@@ -1,0 +1,25 @@
+         6377617 function calls (6177619 primitive calls) in 0.898 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.001    0.001    0.898    0.898 <string>:1(<module>)
+   100000    0.037    0.000    0.072    0.000 random.py:200(randrange)
+   100000    0.022    0.000    0.094    0.000 random.py:244(randint)
+   100000    0.025    0.000    0.035    0.000 random.py:250(_randbelow_with_getrandbits)
+        1    0.000    0.000    0.000    0.000 run_profile.py:21(get_sort)
+        1    0.000    0.000    0.898    0.898 run_profile.py:33(profile)
+    99999    0.462    0.000    0.640    0.000 sort.py:20(merge)
+ 199999/1    0.127    0.000    0.790    0.790 sort.py:38(merge_sort)
+        1    0.000    0.000    0.107    0.107 sort.py:89(gen_array)
+        1    0.013    0.013    0.107    0.107 sort.py:90(<listcomp>)
+        1    0.000    0.000    0.898    0.898 {built-in method builtins.exec}
+  3673163    0.134    0.000    0.134    0.000 {built-in method builtins.len}
+  1536584    0.050    0.000    0.050    0.000 {method 'append' of 'list' objects}
+   100000    0.003    0.000    0.003    0.000 {method 'bit_length' of 'int' objects}
+    99999    0.006    0.000    0.006    0.000 {method 'clear' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+   199998    0.012    0.000    0.012    0.000 {method 'extend' of 'list' objects}
+   167868    0.008    0.000    0.008    0.000 {method 'getrandbits' of '_random.Random' objects}
+
+

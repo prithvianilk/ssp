@@ -1,7 +1,7 @@
-from copy import deepcopy
-from random import randint as rand
 import unittest
-from sort import selection_sort, heap_sort, merge_sort, insertion_sort, gen_array
+
+from sort import (gen_array, heap_sort, insertion_sort, merge_sort,
+                  selection_sort)
 
 
 class TestSortAlgos(unittest.TestCase):

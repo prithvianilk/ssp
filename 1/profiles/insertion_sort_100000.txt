@@ -1,0 +1,21 @@
+         567877 function calls in 552.690 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.001    0.001  552.690  552.690 <string>:1(<module>)
+   100000    0.032    0.000    0.066    0.000 random.py:200(randrange)
+   100000    0.016    0.000    0.082    0.000 random.py:244(randint)
+   100000    0.022    0.000    0.034    0.000 random.py:250(_randbelow_with_getrandbits)
+        1    0.000    0.000    0.000    0.000 run_profile.py:21(get_sort)
+        1    0.001    0.001  552.689  552.689 run_profile.py:33(profile)
+        1  552.595  552.595  552.595  552.595 sort.py:79(insertion_sort)
+        1    0.000    0.000    0.093    0.093 sort.py:89(gen_array)
+        1    0.011    0.011    0.093    0.093 sort.py:90(<listcomp>)
+        1    0.000    0.000  552.690  552.690 {built-in method builtins.exec}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+   100000    0.003    0.000    0.003    0.000 {method 'bit_length' of 'int' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+   167868    0.008    0.000    0.008    0.000 {method 'getrandbits' of '_random.Random' objects}
+
+

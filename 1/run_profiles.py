@@ -1,19 +1,20 @@
 import cProfile
-from random import seed
-import sys
 import os
-from sort import heap_sort, insertion_sort, merge_sort, selection_sort, gen_array
+import sys
+from random import seed
 
+from sort import (gen_array, heap_sort, insertion_sort, merge_sort,
+                  selection_sort)
 
 SEED_VALUE = 23
 
 
 def run_profiles():
-    array_size, limit = int(1e4), int(1e7)
-    while array_size <= limit:
+    array_size = int(1e4)
+    for _ in range(2):
         for name in ["insertion_sort", "selection_sort", "merge_sort", "heap_sort"]:
             print("Running", name, "on", array_size)
-            command = f"python3 ./run_profile.py {name} {array_size} > ./profiles/{name.replace(' ', '_')}_{array_size}.txt"
+            command = f"python3 ./run_profiles.py {name} {array_size} > ./profiles/{name.replace(' ', '_')}_{array_size}.txt"
             os.system(command)
         array_size *= 10
 
