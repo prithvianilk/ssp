@@ -1,0 +1,5 @@
+sorting_algorithm,10000,100000
+heap_sort,0.051,0.841
+insertion_sort,5.042,552.690
+merge_sort,0.067,0.898
+selection_sort,12.886,2274.737
