@@ -2,4 +2,4 @@ Computed value of Pi:   3.141592653
 
 real	0m0.009s
 user	0m0.042s
-sys	0m0.015s
+sys	0m0.014s

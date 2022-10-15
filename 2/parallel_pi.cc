@@ -6,12 +6,6 @@
 int thread_count;
 double gPi = 0.0;  //  global accumulator for areas computed
 
-int stoi(char *str) {
-  int n;
-  sscanf(str, "%d", &n);
-  return n;
-}
-
 void *Area(void *pArg) {
   int myNum = *((int *)pArg);
   double h = 2.0 / NUM_RECT;
@@ -28,7 +22,7 @@ void *Area(void *pArg) {
 }
 
 int main(int argc, char **argv) {
-  thread_count = stoi(argv[1]);
+  thread_count = atoi(argv[1]);
   pthread_t tHandles[thread_count];
   int tNum[thread_count], i;
   for (i = 0; i < thread_count; ++i) {
