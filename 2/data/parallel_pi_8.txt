@@ -1,5 +1,5 @@
 Computed value of Pi:   3.141592653
 
-real	0m0.016s
+real	0m0.010s
 user	0m0.042s
-sys	0m0.029s
+sys	0m0.001s
