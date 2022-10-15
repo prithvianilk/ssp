@@ -1,0 +1,19 @@
+# started on Sat Oct 15 17:48:14 2022
+
+
+ Performance counter stats for 'CPU(s) 0':
+
+              4.56 msec cpu-clock                 #    1.007 CPUs utilized          
+                10      context-switches          #    2.191 K/sec                  
+                 0      cpu-migrations            #    0.000 /sec                   
+             1,029      page-faults               #  225.445 K/sec                  
+        12,262,048      cycles                    #    2.687 GHz                    
+         7,653,627      stalled-cycles-frontend   #   62.42% frontend cycles idle   
+         2,513,402      stalled-cycles-backend    #   20.50% backend cycles idle    
+        12,870,693      instructions              #    1.05  insn per cycle         
+                                                  #    0.59  stalled cycles per insn
+         1,582,390      branches                  #  346.688 M/sec                  
+            12,276      branch-misses             #    0.78% of all branches        
+
+       0.004531979 seconds time elapsed
+
