@@ -1,9 +1,11 @@
 #include<stdio.h>
+#define N 1000000
 int main()
 {
-	int a = 0;
-	for(int i=0;i<1000000;i++)
+	long long int a = 0;
+	for(int i=0;i<N;i++)
 	{
 		a += i;
 	}
+	printf("%lld\n",a);
 }

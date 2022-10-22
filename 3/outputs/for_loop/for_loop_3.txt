@@ -1,0 +1,15 @@
+# started on Sat Oct 22 19:38:07 2022
+
+
+ Performance counter stats for 'CPU(s) 7':
+
+              4.23 msec task-clock                #    1.004 CPUs utilized          
+         7,557,451      instructions              #    0.65  insn per cycle         
+        11,549,672      cycles                    #    2.731 GHz                    
+         1,305,932      branch-instructions       #  308.754 M/sec                  
+            11,494      branch-misses             #    0.88% of all branches        
+            31,757      cache-references          #    7.508 M/sec                  
+            14,041      cache-misses              #   44.214 % of all cache refs    
+
+       0.004212400 seconds time elapsed
+
