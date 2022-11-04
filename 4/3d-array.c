@@ -3,6 +3,14 @@
 #include<time.h>
 
 int traverse(int N,int* arr ){
+	int s=0;
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			for(int k=0;k<N;k++){
+				s+=arr[i*N + j*N + k];
+			}
+		}
+	}
 }
 
 int main(int argc, char *argv[])
@@ -19,7 +27,7 @@ int main(int argc, char *argv[])
 	t=clock()-t;
 
 	double time_taken = ((double)t)/CLOCKS_PER_SEC;
-	printf("Traversal time: %f\n",time_taken);
+	printf("Traversal time for 3d-array N=%d: %f\n",N,time_taken);
 	free(arr);
 
 	return 0;

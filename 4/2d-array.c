@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	t=clock()-t;
 
 	double time_taken = ((double)t)/CLOCKS_PER_SEC;
-	printf("Traversal time: %f\n",time_taken);
+	printf("Traversal time for 2d-array N=%d: %f\n",N,time_taken);
 	free(arr);
 
 	return 0;

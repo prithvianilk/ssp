@@ -1,0 +1,11 @@
+# started on Fri Nov  4 20:58:08 2022
+
+
+ Performance counter stats for 'CPU(s) 7':
+
+            967.88 msec task-clock                #    1.000 CPUs utilized          
+         7,245,783      cache-references          #    7.486 M/sec                  
+         1,338,861      cache-misses              #   18.478 % of all cache refs    
+
+       0.967885076 seconds time elapsed
+
