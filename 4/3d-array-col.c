@@ -7,7 +7,7 @@ int traverse(int N,int* arr ){
 	for(int i=0;i<N;i++){
 		for(int j=0;j<N;j++){
 			for(int k=0;k<N;k++){
-				s+=arr[i + j*N + k*N];
+				s+=arr[i + j*N + k*N*N];
 			}
 		}
 	}
