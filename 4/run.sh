@@ -28,3 +28,9 @@ for i in "${N[@]}"
 do
 	taskset --cpu-list 7 sudo perf stat --cpu=7 -e task-clock,cache-references,cache-misses -o ./outputs/3d-array-col/3d-array_col_$i.txt ./3d-array-col $i >> ./outputs/traversal_times;
 done
+
+cd outputs
+python3 parser.py 2d-array
+python3 parser.py 2d-array-col
+python3 parser.py 3d-array
+python3 parser.py 3d-array-col
