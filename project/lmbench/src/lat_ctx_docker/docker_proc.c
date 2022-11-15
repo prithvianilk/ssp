@@ -7,6 +7,14 @@
 
 const char* USAGE = "Usage: docker_proc <read-pipe-path> <write-pipe-path>";
 
+void check_invalid_usage(int argc) {
+  int is_valid_usage = (argc == 3);
+  if (!is_valid_usage) {
+    fprintf(stderr, "Invalid usage\n%s\n", USAGE);
+    exit(1);
+  }
+}
+
 char* read_token(int read_pipe_fd, char* token) {
   int bytes_read = read(read_pipe_fd, token, 1);
   if (bytes_read != 1) {
@@ -25,17 +33,24 @@ void write_token(int write_pipe_fd, char* token) {
 }
 
 int main(int argc, char* argv[]) {
-  int is_valid_usage = (argc == 3);
-  if (!is_valid_usage) {
-    fprintf(stderr, "Invalid usage\n%s\n", USAGE);
-    return 1;
-  }
+  check_invalid_usage(argc);
+
   char *read_pipe_path = argv[1], *write_pipe_path = argv[2];
-  printf("Read pipe: %s\nWrite pipe: %s\n", read_pipe_path, write_pipe_path);
+
+  printf("Pipes are yet to be created\n");
+  fflush(stdout);
+  mkfifo(read_pipe_path, 0666);
+  mkfifo(write_pipe_path, 0666);
+  printf("Pipes are created\n");
+  fflush(stdout);
+
   int read_pipe_fd = open(read_pipe_path, O_RDONLY);
   int write_pipe_fd = open(write_pipe_path, O_WRONLY);
+  printf("Pipes are opened\n");
+  fflush(stdout);
+
   for (;;) {
-    char token[1];
+    char token[2];
     read_token(read_pipe_fd, token);
     write_token(write_pipe_fd, token);
   }
