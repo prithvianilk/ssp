@@ -1,4 +1,8 @@
 __pycache__
 a.out
+.vscode/
+
+# project
+project/lmbench/pipes/
 project/lmbench/bin/
 project/lmbench/src/bk.ver

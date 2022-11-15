@@ -19,6 +19,10 @@ SHELL=/bin/sh
 build: 
 	cd src && $(MAKE)
 
+lat_ctx_docker:
+	gcc -o bin/docker_proc src/lat_ctx_docker/docker_proc.c
+	sudo docker build -t docker_proc -f ./src/lat_ctx_docker/Dockerfile .
+
 results: FRC
 	cd src && $(MAKE) results
 
