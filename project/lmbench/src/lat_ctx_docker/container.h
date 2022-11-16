@@ -6,6 +6,7 @@
 #define MAX_PATH_LEN 200
 #define MAX_PIPE_PATH_LEN 10 // path is of pattern "/pipes/1"
 #define MAX_CONTAINER_NAME_LEN 12 // name is of pattern "container_1"
+#define MAX_PROC_SIZE_LEN 5
 
 const char* sudo_path = "/usr/bin/sudo";
 const char* docker_path = "/usr/bin/docker";
@@ -17,11 +18,11 @@ void get_container_name(char* name, int id) {
 
 void get_volume_arg(char* volume_arg) {
         char cwd[MAX_PATH_LEN];
-        getcwd(cwd, sizeof(cwd)) == NULL;
+        getcwd(cwd, sizeof(cwd));
         sprintf(volume_arg, "%s/pipes:/pipes/", cwd);
 }
 
-void run_container(int container_id) {
+void run_container(int container_id, int proc_size) {
         char read_pipe_path[MAX_PIPE_PATH_LEN], write_pipe_path[MAX_PIPE_PATH_LEN];
         sprintf(read_pipe_path, "/pipes/%d", container_id - 1);
         sprintf(write_pipe_path, "/pipes/%d", container_id);
@@ -32,11 +33,14 @@ void run_container(int container_id) {
         char volume_arg[MAX_PATH_LEN];
         get_volume_arg(volume_arg);
 
-        char *args[] = {sudo_path, docker_path, "run", "--rm", "-d", "-v", volume_arg, "--name", container_name, "docker_proc", read_pipe_path, write_pipe_path, NULL};
+        char proc_size_str[MAX_PROC_SIZE_LEN];
+        sprintf(proc_size_str, "%d", proc_size);
+
+        char *args[] = {sudo_path, docker_path, "run", "--rm", "-d", "-v", volume_arg, "--name", container_name, "docker_proc", read_pipe_path, write_pipe_path, proc_size_str, NULL};
         execv(sudo_path, args);
 }
 
-void run_containers(int container_count) {
+void run_containers(int container_count, int proc_size) {
         for (int i = 0; i < container_count; ++i) {
 		int container_id = i + 1;
                 pid_t pid = fork();
@@ -45,7 +49,7 @@ void run_containers(int container_count) {
                                 fprintf(stderr, "Failed to create docker container %d, error during fork\nExiting.\n", container_id);
                                 break;
                         case 0:
-                                run_container(container_id);
+                                run_container(container_id, proc_size);
                                 break;
 			default:
 				wait(NULL);
