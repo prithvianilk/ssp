@@ -1,7 +1,7 @@
 char	*id = "$Id$\n";
 
 #include "bench.h"
-
+#include "lat_ctx_docker/container.h"
 
 #define	MAXPROC	2048
 #define	CHUNK	(4<<10)
