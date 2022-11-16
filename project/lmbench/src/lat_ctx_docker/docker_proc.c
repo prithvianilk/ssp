@@ -80,8 +80,10 @@ int main(int argc, char* argv[]) {
 
   if (argc == 4) {
     process_size = atoi(argv[3]) * 1024;
-    data = malloc(process_size);
-    if (data) bzero(data, process_size);
+    if (process_size > 0) {
+      data = malloc(process_size);
+      if (data) bzero(data, process_size);
+    }
   }
 
   int read_pipe_fd = open(read_pipe_path, O_RDONLY);
