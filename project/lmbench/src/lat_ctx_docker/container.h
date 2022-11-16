@@ -24,12 +24,39 @@ void run_containers(int container_count) {
                 pid_t pid = fork();
                 switch (pid) {
                         case -1:
-                                fprintf(stderr, "Failed to create docker container %d during fork\nExiting.\n", container_id);
+                                fprintf(stderr, "Failed to create docker container %d, error during fork\nExiting.\n", container_id);
                                 break;
                         case 0:
                                 run_container(container_id);
                                 break;
+			default:
+				wait(NULL);
                 }
         }
+}
+
+void kill_container(int container_id) {
+        char container_name[12]; // name is of pattern "container_1"
+        sprintf(container_name, "container_%d", container_id);
+
+        char *args[] = {sudo_path, docker_path, "container", "kill", container_name, NULL};
+        execv(sudo_path, args);
+}
+
+void kill_containers(int container_count) {
+	for (int i = 0; i < container_count; ++i) {
+		int container_id = i + 1;
+                pid_t pid = fork();
+                switch (pid) {
+                        case -1:
+                                fprintf(stderr, "Failed to kill docker container %d, error during fork\nExiting.\n", container_id);
+                                break;
+                        case 0:
+                                kill_container(container_id);
+                                break;
+			default:
+				wait(NULL);
+                }
+	}
 }
 

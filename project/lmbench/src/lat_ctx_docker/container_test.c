@@ -1,6 +1,10 @@
 #include "container.h"
 
 int main() {
-	run_containers(2);
+	int container_count = 2;
+	run_containers(container_count);
 	printf("Containers started...\n");
+	sleep(5);
+	kill_containers(container_count);
+	printf("Containers killed...\n");
 }
