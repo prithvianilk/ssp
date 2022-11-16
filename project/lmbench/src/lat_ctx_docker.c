@@ -106,3 +106,12 @@ int create_pipes(int procs)
 		}
 	return procs;
 }
+
+void delete_pipes()
+{
+	int pid = fork();
+	if(pid == 0)
+	{
+		execl("/usr/bin/rm", "/usr/bin/rm", "-rf", "pipes", NULL);
+	}
+}
