@@ -10,6 +10,19 @@
 - Time is measured between all the passes. The time is averaged out by the number of processes. Finally, overhead time is removed to find the average time for a context switch.
 - Then all (# procs - 1) docker containers are killed.
 
+## TODOs
+- [x] Create pipes
+- [x] Delete pipes
+- [x] Run containers
+- [x] Kill containers
+- [x] Docker container containing a process to read and write from a pipe
+- [ ] Initialise overhead - Create all pipes
+- [ ] Benchmark overhead - Single process should read and write to all pipes
+- [ ] Cleanup overhead - Delete all pipes
+- [ ] Initialise - Call initialise overhead, then create containers
+- [ ] Benchmark - Main process writes to 1st pipe and reads from last
+- [ ] Cleanup - Call cleanup overhead, then deletes all containers
+
 ## References
 
 - Context Switch Latency benchmark: https://lmbench.sourceforge.net/man/lat_ctx.8.html
