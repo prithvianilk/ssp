@@ -139,19 +139,21 @@ void benchmark_overhead(iter_t iterations, void* cookie)
 
 			case 0:
 				sprintf(read_pipe_path, "pipes/%d", i);
-				fprintf(stderr, "started open\n", i);
+				fprintf(stderr, "started open for read\n", i);
 				int read_pipe_fd = open(read_pipe_path, O_RDONLY);
-				fprintf(stderr, "opened\n", i);
+				fprintf(stderr, "opened for read\n", i);
 
-				read_token(read_pipe_fd, msg);
+				char *msg_read = (char*)malloc(sizeof(char)*2);
+				read_token(read_pipe_fd, msg_read);
 				fprintf(stderr, "completed read\n", i);
+				exit(0);
 				break;
 
 			default:
 				sprintf(write_pipe_path, "pipes/%d", i);
-				fprintf(stderr, "started open\n", i);
+				fprintf(stderr, "started open for write\n", i);
 				int write_pipe_fd = open(write_pipe_path, O_WRONLY);
-				fprintf(stderr, "opened\n", i);
+				fprintf(stderr, "opened for write\n", i);
 
 				write_token(write_pipe_fd, msg);
 				fprintf(stderr, "completed write\n", i);
