@@ -10,7 +10,12 @@ char	*id = "$Id$\n";
 #define	max(a, b)	((a) > (b) ? (a) : (b))
 #endif
 
+void	initialize_overhead(iter_t iterations, void* cookie);
+void	cleanup_overhead(iter_t iterations, void* cookie);
+void	benchmark_overhead(iter_t iterations, void* cookie);
 int create_pipes(int procs);
+void read_token(int read_pipe_fd, char* token);
+void write_token(int write_pipe_fd, char* token);
 
 struct _state {
 	int	process_size;
@@ -21,8 +26,7 @@ struct _state {
 	void*	data;
 };
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int	i, maxprocs;
 	int	c;
@@ -81,7 +85,97 @@ main(int ac, char **av)
 	}
 	state.procs = maxprocs;
 
+	benchmp(initialize_overhead, benchmark_overhead, cleanup_overhead, 0, 1, warmup, repetitions, &state);
+	if (gettime() == 0) return(0);
+	state.overhead = gettime();
+	state.overhead /= get_n();
+	fprintf(stderr, "\n\"size=%dk ovr=%.2f\n", state.process_size/1024, state.overhead);
+
 	return (0);
+}
+
+void initialize_overhead(iter_t iterations, void* cookie)
+{
+	fprintf(stderr, "in initialise_overhead\n");
+	int procs;
+	struct _state* pState = (struct _state*)cookie;
+
+	if (iterations) return;
+
+	pState->pids = NULL;
+
+	pState->data = (pState->process_size > 0) ? malloc(pState->process_size) : NULL;
+	if (pState->data)
+		bzero(pState->data, pState->process_size);
+
+	procs = create_pipes(pState->procs);
+	if (procs < pState->procs) {
+		cleanup_overhead(0, cookie);
+		exit(1);
+	}
+}
+
+void benchmark_overhead(iter_t iterations, void* cookie)
+{
+	fprintf(stderr, "in benchmark overhead\n");
+	struct _state* pState = (struct _state*)cookie;
+	int	i = 0;
+	char* msg = (char*)malloc(sizeof(char)*2);
+	msg = "a";
+
+	char *write_pipe_path = (char*)malloc(sizeof(char)*10);
+	char *read_pipe_path = (char*)malloc(sizeof(char)*10);
+
+	fprintf(stderr, "iterations %d\n", iterations);
+
+	while (iterations-- > 0) {
+		fprintf(stderr, "i=%d\n", i);
+		int pid;
+		switch(pid = fork())
+		{
+			case -1:
+				fprintf(stderr, "could not fork");
+				exit(1);
+
+			case 0:
+				sprintf(read_pipe_path, "pipes/%d", i);
+				fprintf(stderr, "started open\n", i);
+				int read_pipe_fd = open(read_pipe_path, O_RDONLY);
+				fprintf(stderr, "opened\n", i);
+
+				read_token(read_pipe_fd, msg);
+				fprintf(stderr, "completed read\n", i);
+				break;
+
+			default:
+				sprintf(write_pipe_path, "pipes/%d", i);
+				fprintf(stderr, "started open\n", i);
+				int write_pipe_fd = open(write_pipe_path, O_WRONLY);
+				fprintf(stderr, "opened\n", i);
+
+				write_token(write_pipe_fd, msg);
+				fprintf(stderr, "completed write\n", i);
+
+				if (++i == pState->procs) {
+					i = 0;
+				}
+				bread(pState->data, pState->process_size);
+			break;
+		}
+	}
+}
+
+void cleanup_overhead(iter_t iterations, void* cookie)
+{
+	fprintf(stderr, "in cleanup overhead\n");
+	int i;
+	struct _state* pState = (struct _state*)cookie;
+
+	if (iterations) return;
+
+	if (pState->data) free(pState->data);
+
+	delete_pipes();
 }
 
 int create_pipes(int procs)
@@ -114,4 +208,24 @@ void delete_pipes()
 	{
 		execl("/usr/bin/rm", "/usr/bin/rm", "-rf", "pipes", NULL);
 	}
+}
+
+void read_token(int read_pipe_fd, char* token) {
+  int bytes_read = read(read_pipe_fd, token, 1);
+  if (bytes_read != 1) {
+    fprintf(stderr, "Error while reading token: %d\n", bytes_read);
+    exit(1);
+  }
+  fprintf(stderr,"Read: %s from pipe: %d\n", token, read_pipe_fd);
+//   fflush(stdout);
+}
+
+void write_token(int write_pipe_fd, char* token) {
+  int bytes_written = write(write_pipe_fd, token, 1);
+  if (bytes_written != 1) {
+    fprintf(stderr, "Error while writing token: %d\n", bytes_written);
+    exit(1);
+  }
+  fprintf(stderr, "Wrote: %s to pipe: %d\n", token, write_pipe_fd);
+//   fflush(stdout);
 }
