@@ -54,8 +54,8 @@ void run_containers(int container_count, int proc_size) {
                         case 0:
                                 run_container(container_id, proc_size);
                                 break;
-			// default:
-				// wait(NULL);
+			default:
+				wait(NULL);
                 }
         }
 }

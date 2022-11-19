@@ -2,6 +2,8 @@ char	*id = "$Id$\n";
 
 #include "bench.h"
 #include "lat_ctx_docker/container.h"
+#include <errno.h>
+
 
 #define	MAXPROC	2048
 #define	CHUNK	(4<<10)
@@ -106,6 +108,7 @@ int main(int ac, char **av)
 		time /= state.procs;
 		time -= state.overhead;
 
+		fprintf(stderr, "time: %d\n", time);
 		if (time > 0.0)
 			fprintf(stderr, "Results:- Number of containers:%d Context-switch time:%.2f\n", state.procs, time);
 	}
@@ -144,22 +147,22 @@ void benchmark_overhead(iter_t iterations, void* cookie)
 
 	char *pipe_path = (char*)malloc(sizeof(char)*10);
 
-	fprintf(stderr, "iterations %d\n", iterations);
+	// fprintf(stderr, "iterations %d\n", iterations);
 
 	while (iterations-- > 0) {
-		fprintf(stderr, "i=%d\n", i);
+		// fprintf(stderr, "i=%d\n", i);
 
 		sprintf(pipe_path, "pipes/%d", i);
-		fprintf(stderr, "started open\n", i);
+		// fprintf(stderr, "started open\n", i);
 		int pipe_fd = open(pipe_path, O_RDWR);
-		fprintf(stderr, "opened\n", i);
+		// fprintf(stderr, "opened\n", i);
 
 		write_token(pipe_fd, msg);
-		fprintf(stderr, "completed write\n", i);
+		// fprintf(stderr, "completed write\n", i);
 
 		char *msg_read = (char*)malloc(sizeof(char)*2);
 		read_token(pipe_fd, msg_read);
-		fprintf(stderr, "completed read\n", i);
+		// fprintf(stderr, "completed read\n", i);
 
 		if (++i == pState->procs) {
 			i = 0;
@@ -170,8 +173,7 @@ void benchmark_overhead(iter_t iterations, void* cookie)
 
 void cleanup_overhead(iter_t iterations, void* cookie)
 {
-	fprintf(stderr, "in cleanup overhead\n");
-	int i;
+	fprintf(stderr, "in cleanup overhead");
 	struct _state* pState = (struct _state*)cookie;
 
 	if (iterations) return;
@@ -206,13 +208,15 @@ void benchmark(iter_t iterations, void* cookie)
 	char *read_pipe_path = (char*)malloc(sizeof(char)*10);
 	sprintf(read_pipe_path, "pipes/%d", pState->procs - 1);
 
+	int write_pipe_fd = open(write_pipe_path, O_WRONLY);
+	int read_pipe_fd = open(read_pipe_path, O_RDONLY);
 	while (iterations-- > 0) {
-		int write_pipe_fd = open(write_pipe_path, O_WRONLY);
+		fprintf(stderr, "writing %s in iter %d\n", msg, iterations);
 		write_token(write_pipe_fd, msg);
 
-		int read_pipe_fd = open(read_pipe_path, O_RDONLY);
 		char *msg_read = (char*)malloc(sizeof(char)*2);
 		read_token(read_pipe_fd, msg_read);
+		fprintf(stderr, "read %s in iter %d\n", msg_read, iterations);
 
 		bread(pState->data, pState->process_size);
 	}
@@ -237,7 +241,8 @@ int create_pipes(int procs)
 {
 	//creating the pipes folder
 	char *dir = "pipes";
-	mkdir(dir, 0666);
+	fprintf(stderr, "mkdir %d\n", mkdir(dir, 0666));
+	fprintf(stderr, "err: %d\n", errno);
 
 	char *pipe = (char*)malloc(sizeof(char)*10);
 	int	i;
@@ -245,23 +250,26 @@ int create_pipes(int procs)
 	 * Get a bunch of pipes.
 	 */
 	morefds();
-		for(int i=0;i<procs;++i)
-		{
+		for(int i = 0; i < procs; ++i) {
 			sprintf(pipe, "pipes/%d", i);
-			if(mkfifo(pipe, 0666)!=0)
-			{
+			if(mkfifo(pipe, 0666) != 0) {
+				fprintf(stderr, "Error: Failed to create pipe: %s\n", pipe);
 				return i;
 			}
 		}
 	return procs;
 }
 
-void delete_pipes()
-{
+void delete_pipes() {
+	fprintf(stderr, "In delete_pipes\n");
 	int pid = fork();
-	if(pid == 0)
-	{
+	if (pid == -1) {
+		fprintf(stderr, "Error: Failed to fork\n");
+		exit(1);
+	} else if (pid == 0) {
 		execl("/usr/bin/rm", "/usr/bin/rm", "-rf", "pipes", NULL);
+	} else {
+		wait(NULL);
 	}
 }
 
@@ -271,8 +279,7 @@ void read_token(int read_pipe_fd, char* token) {
     fprintf(stderr, "Error while reading token: %d\n", bytes_read);
     exit(1);
   }
-  fprintf(stderr,"Read: %s from pipe: %d\n", token, read_pipe_fd);
-//   fflush(stdout);
+  // fprintf(stderr,"Read: %s from pipe: %d\n", token, read_pipe_fd);
 }
 
 void write_token(int write_pipe_fd, char* token) {
@@ -281,6 +288,5 @@ void write_token(int write_pipe_fd, char* token) {
     fprintf(stderr, "Error while writing token: %d\n", bytes_written);
     exit(1);
   }
-  fprintf(stderr, "Wrote: %s to pipe: %d\n", token, write_pipe_fd);
-//   fflush(stdout);
+  // fprintf(stderr, "Wrote: %s to pipe: %d\n", token, write_pipe_fd);
 }
