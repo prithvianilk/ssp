@@ -92,6 +92,8 @@ int main(int ac, char **av)
 	}
 	state.procs = maxprocs;
 
+	create_pipes(state.procs);
+
 	benchmp(initialize_overhead, benchmark_overhead, cleanup_overhead, 0, 1, warmup, repetitions, &state);
 	if (gettime() == 0) return(0);
 	state.overhead = gettime();
@@ -99,26 +101,25 @@ int main(int ac, char **av)
 	fprintf(stderr, "\n\"size=%dk ovr=%.2f\n", state.process_size/1024, state.overhead);
 
 	/* compute the context switch cost for N containers */
-	for (i = optind; i < ac; ++i) {
-		state.procs = atoi(av[i]);
-		benchmp(initialize, benchmark, cleanup, 0, parallel, warmup, repetitions, &state);
+	// for (i = optind; i < ac; ++i) {
+	// 	state.procs = atoi(av[i]);
+	// 	benchmp(initialize, benchmark, cleanup, 0, parallel, warmup, repetitions, &state);
 
-		time = gettime();
-		time /= get_n();
-		time /= state.procs;
-		time -= state.overhead;
+	// 	time = gettime();
+	// 	time /= get_n();
+	// 	time /= state.procs;
+	// 	time -= state.overhead;
 
-		fprintf(stderr, "time: %d\n", time);
-		if (time > 0.0)
-			fprintf(stderr, "Results:- Number of containers:%d Context-switch time:%.2f\n", state.procs, time);
-	}
+	// 	if (time > 0.0)
+	// 		fprintf(stderr, "Results:- Number of containers:%d Context-switch time:%.2f\n", state.procs, time);
+	// }
 
 	return (0);
 }
 
 void initialize_overhead(iter_t iterations, void* cookie)
 {
-	fprintf(stderr, "in initialise_overhead\n");
+	// fprintf(stderr, "in initialise_overhead\n");
 	int procs;
 	struct _state* pState = (struct _state*)cookie;
 
@@ -130,16 +131,16 @@ void initialize_overhead(iter_t iterations, void* cookie)
 	if (pState->data)
 		bzero(pState->data, pState->process_size);
 
-	procs = create_pipes(pState->procs);
-	if (procs < pState->procs) {
-		cleanup_overhead(0, cookie);
-		exit(1);
-	}
+	// procs = create_pipes(pState->procs);
+	// if (procs < pState->procs) {
+	// 	cleanup_overhead(0, cookie);
+	// 	exit(1);
+	// }
 }
 
 void benchmark_overhead(iter_t iterations, void* cookie)
 {
-	fprintf(stderr, "in benchmark overhead\n");
+	// fprintf(stderr, "in benchmark overhead\n");
 	struct _state* pState = (struct _state*)cookie;
 	int	i = 0;
 	char* msg = (char*)malloc(sizeof(char)*2);
@@ -149,12 +150,13 @@ void benchmark_overhead(iter_t iterations, void* cookie)
 
 	// fprintf(stderr, "iterations %d\n", iterations);
 
+	sprintf(pipe_path, "pipes/%d", i);
+	int pipe_fd = open(pipe_path, O_RDWR);
+
 	while (iterations-- > 0) {
 		// fprintf(stderr, "i=%d\n", i);
 
-		sprintf(pipe_path, "pipes/%d", i);
 		// fprintf(stderr, "started open\n", i);
-		int pipe_fd = open(pipe_path, O_RDWR);
 		// fprintf(stderr, "opened\n", i);
 
 		write_token(pipe_fd, msg);
@@ -162,6 +164,7 @@ void benchmark_overhead(iter_t iterations, void* cookie)
 
 		char *msg_read = (char*)malloc(sizeof(char)*2);
 		read_token(pipe_fd, msg_read);
+		free(msg_read);
 		// fprintf(stderr, "completed read\n", i);
 
 		if (++i == pState->procs) {
@@ -169,18 +172,20 @@ void benchmark_overhead(iter_t iterations, void* cookie)
 		}
 		bread(pState->data, pState->process_size);
 	}
+	close(pipe_fd);
 }
 
 void cleanup_overhead(iter_t iterations, void* cookie)
 {
-	fprintf(stderr, "in cleanup overhead");
+	// fprintf(stderr, "in cleanup overhead\n");
+	int i;
 	struct _state* pState = (struct _state*)cookie;
 
 	if (iterations) return;
 
 	if (pState->data) free(pState->data);
 
-	delete_pipes();
+	// delete_pipes();
 }
 
 void initialize(iter_t iterations, void* cookie)
@@ -279,7 +284,7 @@ void read_token(int read_pipe_fd, char* token) {
     fprintf(stderr, "Error while reading token: %d\n", bytes_read);
     exit(1);
   }
-  // fprintf(stderr,"Read: %s from pipe: %d\n", token, read_pipe_fd);
+//   fprintf(stderr,"Read: %s from pipe: %d\n", token, read_pipe_fd);
 }
 
 void write_token(int write_pipe_fd, char* token) {
@@ -288,5 +293,5 @@ void write_token(int write_pipe_fd, char* token) {
     fprintf(stderr, "Error while writing token: %d\n", bytes_written);
     exit(1);
   }
-  // fprintf(stderr, "Wrote: %s to pipe: %d\n", token, write_pipe_fd);
+//   fprintf(stderr, "Wrote: %s to pipe: %d\n", token, write_pipe_fd);
 }
