@@ -100,19 +100,24 @@ int main(int ac, char **av)
 	state.overhead /= get_n();
 	fprintf(stderr, "\n\"size=%dk ovr=%.2f\n", state.process_size/1024, state.overhead);
 
+	run_containers(state.procs - 1, state.process_size);
+
 	/* compute the context switch cost for N containers */
-	// for (i = optind; i < ac; ++i) {
-	// 	state.procs = atoi(av[i]);
-	// 	benchmp(initialize, benchmark, cleanup, 0, parallel, warmup, repetitions, &state);
+	for (i = optind; i < ac; ++i) {
+		state.procs = atoi(av[i]);
+		benchmp(initialize, benchmark, cleanup, 0, parallel, warmup, repetitions, &state);
 
-	// 	time = gettime();
-	// 	time /= get_n();
-	// 	time /= state.procs;
-	// 	time -= state.overhead;
+		time = gettime();
+		time /= get_n();
+		time /= state.procs;
+		time -= state.overhead;
 
-	// 	if (time > 0.0)
-	// 		fprintf(stderr, "Results:- Number of containers:%d Context-switch time:%.2f\n", state.procs, time);
-	// }
+		if (time > 0.0)
+			fprintf(stderr, "Results:- Number of containers:%d Context-switch time:%.2f\n", state.procs, time);
+	}
+
+	kill_containers(state.procs - 1);
+	delete_pipes();
 
 	return (0);
 }
@@ -156,15 +161,11 @@ void benchmark_overhead(iter_t iterations, void* cookie)
 	while (iterations-- > 0) {
 		// fprintf(stderr, "i=%d\n", i);
 
-		// fprintf(stderr, "started open\n", i);
-		// fprintf(stderr, "opened\n", i);
-
 		write_token(pipe_fd, msg);
 		// fprintf(stderr, "completed write\n", i);
 
-		char *msg_read = (char*)malloc(sizeof(char)*2);
+		char msg_read[2];
 		read_token(pipe_fd, msg_read);
-		free(msg_read);
 		// fprintf(stderr, "completed read\n", i);
 
 		if (++i == pState->procs) {
@@ -190,19 +191,19 @@ void cleanup_overhead(iter_t iterations, void* cookie)
 
 void initialize(iter_t iterations, void* cookie)
 {
-	fprintf(stderr, "in initialise\n");
+	// fprintf(stderr, "in initialise\n");
 	struct _state* pState = (struct _state*)cookie;
 
 	if (iterations) return;
 
 	initialize_overhead(iterations, cookie);
 
-	run_containers(pState->procs - 1, pState->process_size);
+	// run_containers(pState->procs - 1, pState->process_size);
 }
 
 void benchmark(iter_t iterations, void* cookie)
 {
-	fprintf(stderr, "in benchmark\n");
+	// fprintf(stderr, "in benchmark\n");
 	struct _state* pState = (struct _state*)cookie;
 
 	char* msg = (char*)malloc(sizeof(char)*2);
@@ -216,12 +217,12 @@ void benchmark(iter_t iterations, void* cookie)
 	int write_pipe_fd = open(write_pipe_path, O_WRONLY);
 	int read_pipe_fd = open(read_pipe_path, O_RDONLY);
 	while (iterations-- > 0) {
-		fprintf(stderr, "writing %s in iter %d\n", msg, iterations);
+		// fprintf(stderr, "writing %s in iter %d\n", msg, iterations);
 		write_token(write_pipe_fd, msg);
 
-		char *msg_read = (char*)malloc(sizeof(char)*2);
+		char msg_read[2];
 		read_token(read_pipe_fd, msg_read);
-		fprintf(stderr, "read %s in iter %d\n", msg_read, iterations);
+		// fprintf(stderr, "read %s in iter %d\n", msg_read, iterations);
 
 		bread(pState->data, pState->process_size);
 	}
@@ -229,17 +230,14 @@ void benchmark(iter_t iterations, void* cookie)
 
 void cleanup(iter_t iterations, void* cookie)
 {
-	fprintf(stderr, "in cleanup\n");
+	// fprintf(stderr, "in cleanup\n");
 	struct _state* pState = (struct _state*)cookie;
 
 	if (iterations) return;
 
-	/*
-	 * Close the pipes and kill the containers.
-	 */
 	cleanup_overhead(iterations, cookie);
 
-	kill_containers(pState->procs - 1);
+	// kill_containers(pState->procs - 1);
 }
 
 int create_pipes(int procs)
