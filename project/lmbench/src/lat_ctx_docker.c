@@ -127,9 +127,6 @@ int main(int ac, char **av)
 		sleep(2);
 	}
 
-	// kill_containers(state.procs - 1);
-	delete_pipes();
-
 	return (0);
 }
 
@@ -257,7 +254,7 @@ void mkdir_pipes() {
 		fprintf(stderr, "Error: Failed to fork\n");
 		exit(1);
 	} else if (pid == 0) {
-		execl("/usr/bin/mkdir", "/usr/bin/mkdir", "pipes", NULL);
+		execl("/usr/bin/mkdir", "mkdir", "pipes", NULL);
 	} else {
 		wait(NULL);
 	}
@@ -291,7 +288,7 @@ void delete_pipes() {
 		fprintf(stderr, "Error: Failed to fork\n");
 		exit(1);
 	} else if (pid == 0) {
-		execl("sudo", "sudo", "/usr/bin/rm", "-rf", "pipes", NULL);
+		execl("/usr/bin/rm", "rm", "-rf", "pipes", NULL);
 	} else {
 		wait(NULL);
 	}
