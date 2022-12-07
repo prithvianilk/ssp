@@ -103,6 +103,7 @@ int main(int ac, char **av)
 	delete_pipes();
 	sleep(2);
 
+	fprintf(stderr, "Number Of Containers, Context Switch Time\n");
 	/* compute the context switch cost for N containers */
 	for (i = optind; i < ac; ++i) {
 		state.procs = atoi(av[i]);
@@ -118,7 +119,7 @@ int main(int ac, char **av)
 		time -= state.overhead;
 
 		if (time > 0.0)
-			fprintf(stderr, "Results:- Number of containers:%d Context-switch time:%.2f\n", state.procs, time);
+			fprintf(stderr, "%d,%.2f\n", state.procs, time);
 
 		kill_containers(state.procs - 1);
 		delete_pipes();
@@ -126,6 +127,8 @@ int main(int ac, char **av)
 		sleep(2);
 	}
 
+	// kill_containers(state.procs - 1);
+	delete_pipes();
 
 	return (0);
 }
@@ -248,12 +251,22 @@ void cleanup(iter_t iterations, void* cookie)
 	// kill_containers(pState->procs - 1);
 }
 
+void mkdir_pipes() {
+	int pid = fork();
+	if (pid == -1) {
+		fprintf(stderr, "Error: Failed to fork\n");
+		exit(1);
+	} else if (pid == 0) {
+		execl("/usr/bin/mkdir", "/usr/bin/mkdir", "pipes", NULL);
+	} else {
+		wait(NULL);
+	}
+}
+
 int create_pipes(int procs)
 {
 	//creating the pipes folder
-	char *dir = "pipes";
-	fprintf(stderr, "mkdir %d\n", mkdir(dir, 0666));
-	fprintf(stderr, "err: %d\n", errno);
+	mkdir_pipes();
 
 	char *pipe = (char*)malloc(sizeof(char)*10);
 	int	i;
@@ -278,7 +291,7 @@ void delete_pipes() {
 		fprintf(stderr, "Error: Failed to fork\n");
 		exit(1);
 	} else if (pid == 0) {
-		execl("/usr/bin/rm", "/usr/bin/rm", "-rf", "pipes", NULL);
+		execl("sudo", "sudo", "/usr/bin/rm", "-rf", "pipes", NULL);
 	} else {
 		wait(NULL);
 	}

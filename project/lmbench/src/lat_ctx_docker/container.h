@@ -41,10 +41,9 @@ void run_container(int container_id, int proc_size) {
 }
 
 void run_containers(int container_count, int proc_size) {
-        fprintf(stderr, "creating %d containers\n", container_count);
         for (int i = 0; i < container_count; ++i) {
 		int container_id = i + 1;
-                fprintf(stderr, "containerId: %d\n", container_id);
+                // fprintf(stderr, "containerId: %d\n", container_id);
                 pid_t pid = fork();
                 switch (pid) {
                         case -1:
