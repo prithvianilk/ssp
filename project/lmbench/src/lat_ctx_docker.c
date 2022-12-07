@@ -100,11 +100,16 @@ int main(int ac, char **av)
 	state.overhead /= get_n();
 	fprintf(stderr, "\n\"size=%dk ovr=%.2f\n", state.process_size/1024, state.overhead);
 
-	run_containers(state.procs - 1, state.process_size);
+	delete_pipes();
+	sleep(2);
 
 	/* compute the context switch cost for N containers */
 	for (i = optind; i < ac; ++i) {
 		state.procs = atoi(av[i]);
+
+		create_pipes(state.procs);
+		run_containers(state.procs - 1, state.process_size);
+
 		benchmp(initialize, benchmark, cleanup, 0, parallel, warmup, repetitions, &state);
 
 		time = gettime();
@@ -114,10 +119,13 @@ int main(int ac, char **av)
 
 		if (time > 0.0)
 			fprintf(stderr, "Results:- Number of containers:%d Context-switch time:%.2f\n", state.procs, time);
+
+		kill_containers(state.procs - 1);
+		delete_pipes();
+
+		sleep(2);
 	}
 
-	kill_containers(state.procs - 1);
-	delete_pipes();
 
 	return (0);
 }
@@ -264,7 +272,7 @@ int create_pipes(int procs)
 }
 
 void delete_pipes() {
-	fprintf(stderr, "In delete_pipes\n");
+	// fprintf(stderr, "In delete_pipes\n");
 	int pid = fork();
 	if (pid == -1) {
 		fprintf(stderr, "Error: Failed to fork\n");
