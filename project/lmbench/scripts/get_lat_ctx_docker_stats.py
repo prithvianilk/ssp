@@ -11,15 +11,15 @@ def run_bench():
     os.system(command)
 
 def gen_container_size_stats():
-    # sudo ./bin/x86_64-linux-gnu/lat_ctx_docker -I docker_proc_sm 5
-    # sudo ./bin/x86_64-linux-gnu/lat_ctx_docker -I docker_proc_m 5
-    # sudo ./bin/x86_64-linux-gnu/lat_ctx_docker -I docker_proc_l 5
-    # sudo ./bin/x86_64-linux-gnu/lat_ctx_docker -I docker_proc_xl 5
-    # sudo ./bin/x86_64-linux-gnu/lat_ctx_docker -I docker_proc_xxl 5
-    pass
+    size_options = ["sm", "m", "l", "xl", "xxl"]
+    for size in size_options:
+        command = f'sudo {COMMAND_PATH} -I docker_proc_{size} {MAX_CONTAINER_COUNT}'
+        os.system(command)
 
 def gen_num_layer_stats():
-    pass
+    for layers in range(1,6):
+        command = f'sudo {COMMAND_PATH} -I docker_proc_{layers} {MAX_CONTAINER_COUNT}'
+        os.system(command)
 
 def gen_memory_sensitivity_stats():
     pass
