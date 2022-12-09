@@ -31,6 +31,7 @@ struct _state {
 	pid_t*	pids;
 	int	**p;
 	void*	data;
+	char *image_name;
 };
 
 int main(int ac, char **av)
@@ -41,7 +42,7 @@ int main(int ac, char **av)
 	int	warmup = 0;
 	int	repetitions = TRIES;
 	struct _state state;
-	char *usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>] [-s kbytes] processes [processes ...]\n";
+	char *usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>] [-s kbytes] [-I <image_name>] processes [processes ...]\n";
 	double	time;
 
 	/*
@@ -55,11 +56,12 @@ int main(int ac, char **av)
 	state.process_size = 0;
 	state.overhead = 0.0;
 	state.pids = NULL;
+	state.image_name = "docker_proc";
 
 	/*
 	 * If they specified a context size, or parallelism level, get them.
 	 */
-	while (( c = getopt(ac, av, "s:P:W:N:")) != EOF) {
+	while (( c = getopt(ac, av, "s:P:W:N:I:")) != EOF) {
 		switch(c) {
 		case 'P':
 			parallel = atoi(optarg);
@@ -73,6 +75,9 @@ int main(int ac, char **av)
 			break;
 		case 's':
 			state.process_size = atoi(optarg) * 1024;
+			break;
+		case 'I':
+			state.image_name = optarg;
 			break;
 		default:
 			lmbench_usage(ac, av, usage);
@@ -109,7 +114,7 @@ int main(int ac, char **av)
 		state.procs = atoi(av[i]);
 
 		create_pipes(state.procs);
-		run_containers(state.procs - 1, state.process_size);
+		run_containers(state.procs - 1, state.process_size, state.image_name);
 
 		benchmp(initialize, benchmark, cleanup, 0, parallel, warmup, repetitions, &state);
 

@@ -22,7 +22,7 @@ void get_volume_arg(char* volume_arg) {
         sprintf(volume_arg, "%s/pipes:/pipes/", cwd);
 }
 
-void run_container(int container_id, int proc_size) {
+void run_container(int container_id, int proc_size, char* image_name) {
         char read_pipe_path[MAX_PIPE_PATH_LEN], write_pipe_path[MAX_PIPE_PATH_LEN];
         sprintf(read_pipe_path, "/pipes/%d", container_id - 1);
         sprintf(write_pipe_path, "/pipes/%d", container_id);
@@ -36,13 +36,13 @@ void run_container(int container_id, int proc_size) {
         char proc_size_str[MAX_PROC_SIZE_LEN];
         sprintf(proc_size_str, "%d", proc_size);
 
-        char *args[] = {sudo_path, docker_path, "run", "--rm", "-d", "-v", volume_arg, "--name", container_name, "docker_proc", read_pipe_path, write_pipe_path, proc_size_str, NULL};
+        char *args[] = {sudo_path, docker_path, "run", "--rm", "-d", "-v", volume_arg, "--name", container_name, image_name, read_pipe_path, write_pipe_path, proc_size_str, NULL};
         execv(sudo_path, args);
 }
 
-void run_containers(int container_count, int proc_size) {
+void run_containers(int container_count, int proc_size, char* image_name) {
         for (int i = 0; i < container_count; ++i) {
-		int container_id = i + 1;
+                int container_id = i + 1;
                 // fprintf(stderr, "containerId: %d\n", container_id);
                 pid_t pid = fork();
                 switch (pid) {
@@ -51,10 +51,10 @@ void run_containers(int container_count, int proc_size) {
                                 exit(1);
                                 break;
                         case 0:
-                                run_container(container_id, proc_size);
+                                run_container(container_id, proc_size, image_name);
                                 break;
-			default:
-				wait(NULL);
+                        default:
+                                wait(NULL);
                 }
         }
 }
