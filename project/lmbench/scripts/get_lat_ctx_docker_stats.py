@@ -18,12 +18,17 @@ def gen_container_size_stats():
 
 def gen_num_layer_stats():
     for layers in range(1,6):
-        command = f'sudo {COMMAND_PATH} -I docker_proc_{layers} {MAX_CONTAINER_COUNT}'
+        command = f'sudo {COMMAND_PATH} -I docker_proc_l{layers} {MAX_CONTAINER_COUNT}'
         os.system(command)
 
 def gen_memory_sensitivity_stats():
     pass
 
 if __name__ == "__main__":
+    print("NORMAL EXECUTION")
     run_bench()
+    print("VARYING CONTAINER SIZE")
+    gen_container_size_stats()
+    print("VARYING CONTAINER LAYERS")
+    gen_num_layer_stats()
 
