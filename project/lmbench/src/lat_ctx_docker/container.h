@@ -16,6 +16,14 @@ void get_container_name(char* name, int id) {
         sprintf(name, "container_%d", id);
 }
 
+void disable_print() {
+        int fd = open("/dev/null", O_WRONLY);
+
+        dup2(fd, 1);    /* make stdout a copy of fd (> /dev/null) */
+        dup2(fd, 2);    /* ...and same with stderr */
+        close(fd);      /* close fd */
+}
+
 void get_volume_arg(char* volume_arg) {
         char cwd[MAX_PATH_LEN];
         getcwd(cwd, sizeof(cwd));
@@ -35,6 +43,8 @@ void run_container(int container_id, int proc_size, char* image_name) {
 
         char proc_size_str[MAX_PROC_SIZE_LEN];
         sprintf(proc_size_str, "%d", proc_size);
+
+        disable_print();
 
         char *args[] = {sudo_path, docker_path, "run", "--rm", "-d", "-v", volume_arg, "--name", container_name, image_name, read_pipe_path, write_pipe_path, proc_size_str, NULL};
         execv(sudo_path, args);
@@ -62,6 +72,8 @@ void run_containers(int container_count, int proc_size, char* image_name) {
 void kill_container(int container_id) {
         char container_name[MAX_CONTAINER_NAME_LEN];
         get_container_name(container_name, container_id);
+
+        disable_print();
 
         char *args[] = {sudo_path, docker_path, "kill", container_name, NULL};
         execv(sudo_path, args);
