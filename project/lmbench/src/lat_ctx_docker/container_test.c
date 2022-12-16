@@ -2,7 +2,7 @@
 
 int main() {
 	int container_count = 2, proc_size = 1;
-	run_containers(container_count, proc_size);
+	run_containers(container_count, proc_size, "docker_proc");
 	printf("Containers started...\n");
 	sleep(5);
 	kill_containers(container_count);

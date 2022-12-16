@@ -1,11 +1,7 @@
-FROM archlinux:latest AS builder
-RUN pacman -Syu --noconfirm
-RUN pacman -S gcc --noconfirm
-COPY src/lat_ctx_docker/docker_proc.c docker_proc.c
-RUN gcc -o docker_proc docker_proc.c
-
-FROM archlinux:latest
+FROM ubuntu:22.04
 RUN mkdir /pipes
-WORKDIR /bin
-COPY --from=builder docker_proc .
+RUN apt-get update
+RUN apt-get install openjdk-8-jre -y
+RUN apt-get clean
+ADD bin/docker_proc /bin/docker_proc
 ENTRYPOINT ["docker_proc"]
