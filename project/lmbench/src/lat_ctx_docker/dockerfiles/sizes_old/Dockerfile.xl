@@ -1,0 +1,13 @@
+FROM centos:latest AS builder
+RUN cd /etc/yum.repos.d/
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+RUN dnf install gcc -y
+COPY src/lat_ctx_docker/docker_proc.c docker_proc.c
+RUN gcc -o docker_proc docker_proc.c
+
+FROM centos:latest
+RUN mkdir /pipes
+WORKDIR /bin
+COPY --from=builder docker_proc .
+ENTRYPOINT ["docker_proc"]

@@ -1,0 +1,8 @@
+FROM ubuntu:22.04
+RUN mkdir /pipes
+ADD bin/docker_proc /bin/docker_proc
+RUN touch layer1.txt
+RUN touch layer2.txt
+RUN touch layer3.txt
+RUN touch layer4.txt
+ENTRYPOINT ["docker_proc"]
