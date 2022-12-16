@@ -50,13 +50,17 @@ def gen_memory_sensitivity_stats(dirpath):
 
 if __name__ == "__main__":
     dirpath = str(sys.argv[1])
-    # create_output_dir(dirpath)
-    # print("NORMAL EXECUTION")
-    # run_bench(dirpath)
-    # print("VARYING CONTAINER SIZE")
-    # gen_container_size_stats(dirpath)
-    # print("VARYING CONTAINER LAYERS")
-    # gen_num_layer_stats(dirpath)
+    create_output_dir(dirpath)
+
+    print("NORMAL EXECUTION")
+    run_bench(dirpath)
+
+    print("VARYING CONTAINER SIZE")
+    gen_container_size_stats(dirpath)
+
+    print("VARYING CONTAINER LAYERS")
+    gen_num_layer_stats(dirpath)
+
     print("VARYING MEMORY")
     gen_memory_sensitivity_stats(dirpath)
 
