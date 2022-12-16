@@ -10,23 +10,27 @@ rm ./outputs/traversal_times
 
 for i in "${N[@]}"
 do
-	taskset --cpu-list 7 sudo perf stat --cpu=7 -e task-clock,cache-references,cache-misses -o ./outputs/2d-array/2d-array_$i.txt ./2d-array $i >> ./outputs/traversal_times;
+	core=$(($i/200))
+	taskset --cpu-list $core sudo perf stat --cpu=$core -e task-clock,cache-references,cache-misses -o ./outputs/2d-array/2d-array_$i.txt ./2d-array $i >> ./outputs/traversal_times &
 done
 
 for i in "${N[@]}"
 do
-	taskset --cpu-list 7 sudo perf stat --cpu=7 -e task-clock,cache-references,cache-misses -o ./outputs/2d-array-col/2d-array_$i.txt ./2d-array-col $i >> ./outputs/traversal_times;
+	core=$(($i/200))
+	taskset --cpu-list $core sudo perf stat --cpu=$core -e task-clock,cache-references,cache-misses -o ./outputs/2d-array-col/2d-array_$i.txt ./2d-array-col $i >> ./outputs/traversal_times &
 done
 
 N=( 10 25 50 75 100 250 500 750 1000 )
 for i in "${N[@]}"
 do
-	taskset --cpu-list 7 sudo perf stat --cpu=7 -e task-clock,cache-references,cache-misses -o ./outputs/3d-array/3d-array_$i.txt ./3d-array $i >> ./outputs/traversal_times;
+	core=$(($i/20))
+	taskset --cpu-list $core sudo perf stat --cpu=$core -e task-clock,cache-references,cache-misses -o ./outputs/3d-array/3d-array_$i.txt ./3d-array $i >> ./outputs/traversal_times &
 done
 
 for i in "${N[@]}"
 do
-	taskset --cpu-list 7 sudo perf stat --cpu=7 -e task-clock,cache-references,cache-misses -o ./outputs/3d-array-col/3d-array_col_$i.txt ./3d-array-col $i >> ./outputs/traversal_times;
+	core=$(($i/20))
+	taskset --cpu-list $core sudo perf stat --cpu=$core -e task-clock,cache-references,cache-misses -o ./outputs/3d-array-col/3d-array_col_$i.txt ./3d-array-col $i >> ./outputs/traversal_times &
 done
 
 cd outputs
