@@ -5,7 +5,7 @@
 
 #define MAX_PATH_LEN 200
 #define MAX_PIPE_PATH_LEN 10 // path is of pattern "/pipes/1"
-#define MAX_CONTAINER_NAME_LEN 12 // name is of pattern "container_1"
+#define MAX_CONTAINER_NAME_LEN 15 // name is of pattern "container_1"
 #define MAX_PROC_SIZE_LEN 5
 
 const char* sudo_path = "/usr/bin/sudo";
