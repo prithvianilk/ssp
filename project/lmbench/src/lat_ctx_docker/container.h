@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-
 #define MAX_PATH_LEN 200
-#define MAX_PIPE_PATH_LEN 10 // path is of pattern "/pipes/1"
-#define MAX_CONTAINER_NAME_LEN 15 // name is of pattern "container_1"
 #define MAX_PROC_SIZE_LEN 5
+#define MAX_PIPE_PATH_LEN 25       // path is of pattern "/pipes/1"
+#define MAX_CONTAINER_NAME_LEN 15  // name is of pattern "container_1"
+#define MAX_CONTAINER_ID_LEN 4     // container_id is an integer
 
 const char* sudo_path = "/usr/bin/sudo";
 const char* docker_path = "/usr/bin/docker";
@@ -30,7 +30,15 @@ void get_volume_arg(char* volume_arg) {
         sprintf(volume_arg, "%s/pipes:/pipes/", cwd);
 }
 
+void get_perf_stats_volume_arg(char* volume_arg) {
+        char cwd[MAX_PATH_LEN];
+        getcwd(cwd, sizeof(cwd));
+        sprintf(volume_arg, "%s/perf-stats:/perf-stats/", cwd);
+}
+
 void run_container(int container_id, int proc_size, char* image_name) {
+        disable_print();
+
         char read_pipe_path[MAX_PIPE_PATH_LEN], write_pipe_path[MAX_PIPE_PATH_LEN];
         sprintf(read_pipe_path, "/pipes/%d", container_id - 1);
         sprintf(write_pipe_path, "/pipes/%d", container_id);
@@ -41,12 +49,19 @@ void run_container(int container_id, int proc_size, char* image_name) {
         char volume_arg[MAX_PATH_LEN];
         get_volume_arg(volume_arg);
 
+        char perf_stats_volume_arg[MAX_PATH_LEN];
+        get_perf_stats_volume_arg(perf_stats_volume_arg);
+
         char proc_size_str[MAX_PROC_SIZE_LEN];
         sprintf(proc_size_str, "%d", proc_size);
+        
+        char *CPU = "2"; // TODO: Make this a function parameter
+        char container_id_str[MAX_CONTAINER_ID_LEN];
+        sprintf(container_id_str, "%d", container_id);
 
-        disable_print();
-
-        char *args[] = {sudo_path, docker_path, "run", "--rm", "-d", "-v", volume_arg, "--name", container_name, image_name, read_pipe_path, write_pipe_path, proc_size_str, NULL};
+        char *args[] = {sudo_path, docker_path, "run", 
+                "--privileged", "--cpuset-cpus", CPU, "--rm", "-d", "-v", volume_arg, "-v", perf_stats_volume_arg, "--name", container_name, 
+                image_name, CPU, container_id_str, read_pipe_path, write_pipe_path, proc_size_str, NULL};
         execv(sudo_path, args);
 }
 

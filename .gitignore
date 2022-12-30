@@ -4,6 +4,7 @@ a.out
 
 # project
 project/lmbench/pipes/
+project/lmbench/perf-stats*
 project/lmbench/bin/
 project/lmbench/src/bk.ver
 project/lmbench/outputs

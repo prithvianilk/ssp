@@ -283,7 +283,7 @@ $O/lat_ctx: lat_ctx.c timing.h stats.h bench.h $O/lmbench.a
 	$(COMPILE) -o $O/lat_ctx lat_ctx.c $O/lmbench.a $(LDLIBS)
 
 $O/lat_ctx_docker.s: lat_ctx_docker.c timing.h stats.h bench.h
-$O/lat_ctx_docker: lat_ctx_docker.c timing.h stats.h bench.h $O/lmbench.a
+$O/lat_ctx_docker: lat_ctx_docker.c lat_ctx_docker/container.h timing.h stats.h bench.h $O/lmbench.a
 	$(COMPILE) -o $O/lat_ctx_docker lat_ctx_docker.c $O/lmbench.a $(LDLIBS)
 
 $O/lmhttp.s:lmhttp.c timing.h stats.h bench.h
