@@ -36,7 +36,7 @@ void get_perf_stats_volume_arg(char* volume_arg) {
         sprintf(volume_arg, "%s/perf-stats:/perf-stats/", cwd);
 }
 
-void run_container(int container_id, int proc_size, char* image_name) {
+void run_container(int container_id, int proc_size, char* image_name,char *cpu ) {
         disable_print();
 
         char read_pipe_path[MAX_PIPE_PATH_LEN], write_pipe_path[MAX_PIPE_PATH_LEN];
@@ -55,7 +55,8 @@ void run_container(int container_id, int proc_size, char* image_name) {
         char proc_size_str[MAX_PROC_SIZE_LEN];
         sprintf(proc_size_str, "%d", proc_size);
         
-        char *CPU = "2"; // TODO: Make this a function parameter
+        // char *CPU = "2"; // TODO: Make this a function parameter
+        char *CPU = cpu;
         char container_id_str[MAX_CONTAINER_ID_LEN];
         sprintf(container_id_str, "%d", container_id);
 
@@ -65,7 +66,7 @@ void run_container(int container_id, int proc_size, char* image_name) {
         execv(sudo_path, args);
 }
 
-void run_containers(int container_count, int proc_size, char* image_name) {
+void run_containers(int container_count, int proc_size, char* image_name, char *cpu) {
         for (int i = 0; i < container_count; ++i) {
                 int container_id = i + 1;
                 // fprintf(stderr, "containerId: %d\n", container_id);
@@ -76,7 +77,7 @@ void run_containers(int container_count, int proc_size, char* image_name) {
                                 exit(1);
                                 break;
                         case 0:
-                                run_container(container_id, proc_size, image_name);
+                                run_container(container_id, proc_size, image_name,cpu);
                                 break;
                         default:
                                 wait(NULL);
