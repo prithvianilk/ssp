@@ -6,4 +6,8 @@ RUN touch layer2.txt
 RUN touch layer3.txt
 RUN touch layer4.txt
 RUN touch layer5.txt
-ENTRYPOINT ["docker_proc"]
+RUN apt-get update
+RUN apt-get install -y linux-tools-common linux-tools-aws
+ADD src/lat_ctx_docker/run.sh /run.sh
+RUN chmod +x run.sh
+ENTRYPOINT ["./run.sh"]
