@@ -33,6 +33,7 @@ struct _state {
 	void*	data;
 	char *image_name;
 	char *perf_stat_folder;
+	char *cpu;
 };
 
 int main(int ac, char **av)
@@ -43,7 +44,7 @@ int main(int ac, char **av)
 	int	warmup = 0;
 	int	repetitions = TRIES;
 	struct _state state;
-	char *usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>] [-s kbytes] [-I <image_name>] [-F <perf-stat_folder_path>] processes [processes ...]\n";
+	char *usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>] [-s kbytes] [-I <image_name>] [-c <CPU core>] [-F <perf-stat_folder_path>] processes [processes ...]\n";
 	double	time;
 
 	/*
@@ -59,11 +60,12 @@ int main(int ac, char **av)
 	state.pids = NULL;
 	state.image_name = "docker_proc";
 	state.perf_stat_folder = "perf_stats";
+	state.cpu = "2";
 
 	/*
 	 * If they specified a context size, or parallelism level, get them.
 	 */
-	while (( c = getopt(ac, av, "s:P:W:N:I:F:")) != EOF) {
+	while (( c = getopt(ac, av, "s:P:W:N:I:c:F:")) != EOF) {
 		switch(c) {
 		case 'P':
 			parallel = atoi(optarg);
@@ -83,6 +85,9 @@ int main(int ac, char **av)
 			break;
 		case 'F':
 			state.perf_stat_folder = optarg;
+			break;
+		case 'c':
+			state.cpu = optarg;
 			break;
 		default:
 			lmbench_usage(ac, av, usage);
@@ -119,7 +124,7 @@ int main(int ac, char **av)
 		state.procs = atoi(av[i]);
 
 		create_pipes(state.procs);
-		run_containers(state.procs - 1, state.process_size, state.image_name, state.perf_stat_folder);
+		run_containers(state.procs - 1, state.process_size, state.image_name, state.cpu, state.perf_stat_folder);
 
 		benchmp(initialize, benchmark, cleanup, 0, parallel, warmup, repetitions, &state);
 
