@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <string.h>
 
 #define MAX_PATH_LEN 200
 #define MAX_PROC_SIZE_LEN 5
@@ -30,13 +31,20 @@ void get_volume_arg(char* volume_arg) {
         sprintf(volume_arg, "%s/pipes:/pipes/", cwd);
 }
 
-void get_perf_stats_volume_arg(char* volume_arg, char *perf_dir) {
+void get_stats_volume_arg(char* volume_arg, char *stat_dir, char *monitoring_tool) {
         char cwd[MAX_PATH_LEN];
         getcwd(cwd, sizeof(cwd));
-        sprintf(volume_arg, "%s/%s:/perf-stats/", cwd, perf_dir);
+        
+        int is_perf = strcmp(monitoring_tool, "perf") == 0;
+        
+        if (is_perf) {
+                sprintf(volume_arg, "%s/%s:/perf-stats/", cwd, stat_dir);
+        } else {
+                sprintf(volume_arg, "%s/%s:/valgrind-stats/", cwd, stat_dir);
+        }
 }
 
-void run_container(int container_id, int proc_size, char* image_name, char *cpu, char *perf_stat_folder) {
+void run_container(int container_id, int proc_size, char* image_name, char *cpu, char *stat_folder, char* monitoring_tool) {
         disable_print();
 
         char read_pipe_path[MAX_PIPE_PATH_LEN], write_pipe_path[MAX_PIPE_PATH_LEN];
@@ -49,8 +57,8 @@ void run_container(int container_id, int proc_size, char* image_name, char *cpu,
         char volume_arg[MAX_PATH_LEN];
         get_volume_arg(volume_arg);
 
-        char perf_stats_volume_arg[MAX_PATH_LEN];
-        get_perf_stats_volume_arg(perf_stats_volume_arg, perf_stat_folder);
+        char stats_volume_arg[MAX_PATH_LEN];
+        get_stats_volume_arg(stats_volume_arg, stat_folder, monitoring_tool);
 
         char proc_size_str[MAX_PROC_SIZE_LEN];
         sprintf(proc_size_str, "%d", proc_size);
@@ -60,12 +68,12 @@ void run_container(int container_id, int proc_size, char* image_name, char *cpu,
         sprintf(container_id_str, "%d", container_id);
 
         char *args[] = {sudo_path, docker_path, "run", 
-                "--privileged", "--cpuset-cpus", CPU, "--rm", "-d", "-v", volume_arg, "-v", perf_stats_volume_arg, "--name", container_name, 
-                image_name, CPU, container_id_str, read_pipe_path, write_pipe_path, proc_size_str, NULL};
+                "--privileged", "--cpuset-cpus", cpu, "--rm", "-d", "-v", volume_arg, "-v", stats_volume_arg, "--name", container_name, 
+                image_name, cpu, container_id_str, read_pipe_path, write_pipe_path, proc_size_str, monitoring_tool, NULL};
         execv(sudo_path, args);
 }
 
-void run_containers(int container_count, int proc_size, char* image_name, char* cpu, char *perf_stat_folder) {
+void run_containers(int container_count, int proc_size, char* image_name, char* cpu, char *stat_folder, char* monitoring_tool) {
         for (int i = 0; i < container_count; ++i) {
                 int container_id = i + 1;
                 // fprintf(stderr, "containerId: %d\n", container_id);
@@ -76,7 +84,7 @@ void run_containers(int container_count, int proc_size, char* image_name, char* 
                                 exit(1);
                                 break;
                         case 0:
-                                run_container(container_id, proc_size, image_name, cpu, perf_stat_folder);
+                                run_container(container_id, proc_size, image_name, cpu, stat_folder, monitoring_tool);
                                 break;
                         default:
                                 wait(NULL);
