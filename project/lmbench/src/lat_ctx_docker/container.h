@@ -17,11 +17,11 @@ void get_container_name(char* name, int id) {
 }
 
 void disable_print() {
-        int fd = open("/dev/null", O_WRONLY);
+        // int fd = open("/dev/null", O_WRONLY);
 
-        dup2(fd, 1);    /* make stdout a copy of fd (> /dev/null) */
-        dup2(fd, 2);    /* ...and same with stderr */
-        close(fd);      /* close fd */
+        // dup2(fd, 1);    /* make stdout a copy of fd (> /dev/null) */
+        // dup2(fd, 2);    /* ...and same with stderr */
+        // close(fd);      /* close fd */
 }
 
 void get_volume_arg(char* volume_arg) {
@@ -55,13 +55,12 @@ void run_container(int container_id, int proc_size, char* image_name, char *cpu,
         char proc_size_str[MAX_PROC_SIZE_LEN];
         sprintf(proc_size_str, "%d", proc_size);
         
-        char *CPU = cpu;
         char container_id_str[MAX_CONTAINER_ID_LEN];
         sprintf(container_id_str, "%d", container_id);
 
         char *args[] = {sudo_path, docker_path, "run", 
-                "--privileged", "--cpuset-cpus", CPU, "--rm", "-d", "-v", volume_arg, "-v", perf_stats_volume_arg, "--name", container_name, 
-                image_name, CPU, container_id_str, read_pipe_path, write_pipe_path, proc_size_str, NULL};
+                "--privileged", "--cpuset-cpus", cpu, "--rm", "-d", "-v", volume_arg, "-v", perf_stats_volume_arg, "--name", container_name, 
+                image_name, cpu, container_id_str, read_pipe_path, write_pipe_path, proc_size_str, NULL};
         execv(sudo_path, args);
 }
 

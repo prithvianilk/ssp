@@ -23,17 +23,19 @@ lat_ctx_docker:
 	gcc -o bin/docker_proc src/lat_ctx_docker/docker_proc.c
 	sudo docker build -t docker_proc -f ./src/lat_ctx_docker/Dockerfile .
 
-	sudo docker build -t docker_proc_sm -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.sm .
-	sudo docker build -t docker_proc_m -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.m .
-	sudo docker build -t docker_proc_l -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.l .
-	sudo docker build -t docker_proc_xl -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.xl .
-	sudo docker build -t docker_proc_xxl -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.xxl .
-
+docker_layer:
 	sudo docker build -t docker_proc_l1 -f ./src/lat_ctx_docker/dockerfiles/layers/Dockerfile.1 .
 	sudo docker build -t docker_proc_l2 -f ./src/lat_ctx_docker/dockerfiles/layers/Dockerfile.2 .
 	sudo docker build -t docker_proc_l3 -f ./src/lat_ctx_docker/dockerfiles/layers/Dockerfile.3 .
 	sudo docker build -t docker_proc_l4 -f ./src/lat_ctx_docker/dockerfiles/layers/Dockerfile.4 .
 	sudo docker build -t docker_proc_l5 -f ./src/lat_ctx_docker/dockerfiles/layers/Dockerfile.5 .
+
+docker_size:
+	sudo docker build -t docker_proc_sm -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.sm .
+	sudo docker build -t docker_proc_m -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.m .
+	sudo docker build -t docker_proc_l -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.l .
+	sudo docker build -t docker_proc_xl -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.xl .
+	sudo docker build -t docker_proc_xxl -f ./src/lat_ctx_docker/dockerfiles/sizes/Dockerfile.xxl .
 
 results: FRC
 	cd src && $(MAKE) results

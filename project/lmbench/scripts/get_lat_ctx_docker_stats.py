@@ -49,7 +49,7 @@ def write_averages_to_lmbench_log(dirpath, no_of_containers, values):
         f.write(",\t".join(list(map(str, [no_of_containers, (values[1] * 100) / values[0], (values[3] * 100) / values[2], (values[5] * 100) / values[4]]))))
 
 def run_bench(dirpath):
-    for index, no_of_containers in enumerate([2, 4, 6, 8, 16, 24, 32, 64]):
+    for index, no_of_containers in enumerate([2, 4]):
         perf_stats_path = dirpath+"/perf_stats/no_of_containers/container_{}".format(no_of_containers)
         os.makedirs(perf_stats_path, mode = 0o777, exist_ok=True)
         command_path = COMMAND_PATH.format(index + 3, perf_stats_path)
