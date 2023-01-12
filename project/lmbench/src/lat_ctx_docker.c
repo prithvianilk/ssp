@@ -60,7 +60,7 @@ int main(int ac, char **av)
 	state.pids = NULL;
 	state.image_name = "docker_proc";
 	state.perf_stat_folder = "perf_stats";
-	state.cpu = "2";
+	state.cpu = "0-71";
 
 	/*
 	 * If they specified a context size, or parallelism level, get them.

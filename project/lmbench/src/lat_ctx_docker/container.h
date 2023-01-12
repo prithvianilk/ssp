@@ -17,11 +17,11 @@ void get_container_name(char* name, int id) {
 }
 
 void disable_print() {
-        // int fd = open("/dev/null", O_WRONLY);
+        int fd = open("/dev/null", O_WRONLY);
 
-        // dup2(fd, 1);    /* make stdout a copy of fd (> /dev/null) */
-        // dup2(fd, 2);    /* ...and same with stderr */
-        // close(fd);      /* close fd */
+        dup2(fd, 1);    /* make stdout a copy of fd (> /dev/null) */
+        dup2(fd, 2);    /* ...and same with stderr */
+        close(fd);      /* close fd */
 }
 
 void get_volume_arg(char* volume_arg) {
@@ -36,7 +36,7 @@ void get_perf_stats_volume_arg(char* volume_arg, char *perf_dir) {
         sprintf(volume_arg, "%s/%s:/perf-stats/", cwd, perf_dir);
 }
 
-void run_container(int container_id, int proc_size, char* image_name, char *cpu, char *perf_stat_folder) {
+void run_container(int container_id, int proc_size, char* image_name, char* cpu, char *perf_stat_folder) {
         disable_print();
 
         char read_pipe_path[MAX_PIPE_PATH_LEN], write_pipe_path[MAX_PIPE_PATH_LEN];
